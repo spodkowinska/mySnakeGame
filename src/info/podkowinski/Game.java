@@ -6,12 +6,26 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Map;
+
+import static info.podkowinski.Game.Direction.*;
 
 
 public class Game implements KeyListener {
 
+    enum Direction {
+        RIGHT(1,0), LEFT(-1,0), UP(0, -1), DOWN(0, 1);
+        Direction(int x, int y){
+            X = x;
+            Y = y;
+        }
+        int X, Y;
+    }
+
+
     final int DOT_STARTING_POINT_X = 100;
     final int DOT_STARTING_POINT_Y = 180;
+    final int DOT_SIZE = 15;
     int x = DOT_STARTING_POINT_X; //Dots x actual position
     int y = DOT_STARTING_POINT_Y; //Dots y actual position
 
@@ -22,8 +36,8 @@ public class Game implements KeyListener {
     JLabel label = new JLabel("Welcome to Snake Game. Have fun!");
     JLabel snake = new JLabel(new ImageIcon("C:/Users/SPodkowinska/Downloads/snake.png"));
     JLabel dot = new JLabel(new ImageIcon("dot.png"));
-    Timer timer = new Timer(1000, evt -> moveRight());
-
+    Direction direction = Direction.RIGHT;
+    Timer timer = new Timer(500, evt -> move(direction));
 
     public void init() {
         frame.getContentPane();
@@ -44,14 +58,15 @@ public class Game implements KeyListener {
                 dot.setLocation(x, y);
                 panel.add(dot);
                 panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-                timer.start();
+                if (!timer.isRunning()) {
+                    timer.start();
+                }
             }
         });
 
         label.setBounds(180, 150, sizeLabel.width, sizeLabel.height);
         snake.setBounds(200, 130, sizeSnake.width, sizeSnake.height);
         dot.setBounds(x, y, sizeDot.width, sizeDot.height);
-
 
         panel.setLayout(null);
         panel.add(label);
@@ -70,7 +85,6 @@ public class Game implements KeyListener {
         frame.setIconImage(new ImageIcon("snake.png").getImage());
         frame.setFocusable(true);
         frame.setFocusTraversalKeysEnabled(false);
-
     }
 
     @Override
@@ -80,37 +94,63 @@ public class Game implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            this.moveLeft();
+            if (direction != RIGHT && direction != LEFT) {
+                move(LEFT);
+            }
         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            this.moveRight();
+            if (direction != LEFT && direction != RIGHT) {
+                move(RIGHT);
+            }
         } else if (e.getKeyCode() == KeyEvent.VK_UP) {
-            this.moveUp();
+            if (direction != DOWN && direction != UP) {
+                move(UP);
+            }
         } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-            this.moveDown();
+            if (direction != UP && direction != DOWN) {
+                move(DOWN);
+            }
         }
-        dot.setLocation(x, y);
-        panel.add(dot);
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
     }
+    public void move(Direction d) {
 
-    public void moveLeft() {
-        this.x = dot.getX() - 15;
+        dot.setLocation(dot.getX() + d.X * DOT_SIZE, dot.getY() + d.Y * DOT_SIZE);
+        direction = d;
     }
-
-    public void moveRight() {
-        this.x = dot.getX() + 15;
-    }
-
-    public void moveUp() {
-        this.y = dot.getY() - 15;
-    }
-
-    public void moveDown() {
-        this.y = dot.getY() + 15;
-    }
-
+//
+//    public void moveLeft() {
+//        dot.setLocation(dot.getX() - 15, dot.getY());
+//        direction = Direction.LEFT;
+//    }
+//
+//    public void moveRight() {
+//        dot.setLocation(dot.getX() + 15, dot.getY());
+//        direction = Direction.RIGHT;
+//    }
+//
+//    public void moveUp() {
+//        dot.setLocation(dot.getX(), dot.getY() - 15);
+//        direction = Direction.UP;
+//    }
+//
+//    public void moveDown() {
+//        dot.setLocation(dot.getX(), dot.getY() + 15);
+//        direction = Direction.DOWN;
+//    }
+//        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+//            this.moveLeft();
+//        } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+//            this.moveRight();
+//        } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+//            this.moveUp();
+//        } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+//            this.moveDown();
+//        }
+//        dot.setLocation(x, y);
+//        panel.add(dot);
+//        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 }
